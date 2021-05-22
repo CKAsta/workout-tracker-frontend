@@ -7,7 +7,7 @@
       <nuxt-link to="/login" class="workout-log__buttons--link">
         Login
       </nuxt-link>
-      <nuxt-link to="/" class="workout-log__buttons--link">
+      <nuxt-link to="/signup" class="workout-log__buttons--link">
         Register
       </nuxt-link>
     </div>
@@ -51,21 +51,20 @@ export default {}
     &--link {
       text-align: center;
       font-size: $font-sm;
-      color: $color-text;
+      color: $color-white;
       width: 90px;
-      border: 1px solid $color-info;
+      border: 1px solid $color-nav;
       border-radius: 3px;
       padding: 12px 7px;
-      background-color: $color-info-light;
+      background-color: $color-card;
       text-decoration: none;
       font-weight: 500;
       @media screen and (max-width: $breakpoint-desktop) {
         width: 250px;
       }
 
-      &:hover {
-        background-color: $color-info;
-        color: $color-white;
+      &:hover, &:active {
+        background-color: $color-nav;
       }
     }
   }

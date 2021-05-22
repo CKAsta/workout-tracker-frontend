@@ -18,4 +18,9 @@ html {
   font-size: 16px;
   word-spacing: 1px;
 }
+
+body {
+  width: 100%;
+  margin: 0;
+}
 </style>

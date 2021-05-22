@@ -1,29 +1,36 @@
 <template>
-  <section class="login">
-    <h1 class="login__header">
-      Login
+  <section class="signup">
+    <h1 class="signup__header">
+      Register
     </h1>
-    <form class="login__form" @submit.prevent="login()">
+    <form class="signup__form" @submit.prevent="signup()">
+      <input
+        id="name"
+        v-model="form.name"
+        class="signup__form--input"
+        type="text"
+        placeholder="Name"
+      >
       <input
         id="email"
         v-model="form.email"
-        class="login__form--input"
+        class="signup__form--input"
         type="text"
         placeholder="E-Mail"
       >
       <input
         id="password"
         v-model="form.password"
-        class="login__form--input"
+        class="signup__form--input"
         type="password"
         placeholder="Password"
       >
       <div>
         <button
           type="submit"
-          class="login__form--button"
+          class="signup__form--button"
         >
-          Login
+          Register
         </button>
       </div>
     </form>
@@ -37,6 +44,7 @@ export default {
   data () {
     return {
       form: {
+        name: '',
         email: '',
         password: ''
       }
@@ -46,13 +54,13 @@ export default {
     await this.$apolloHelpers.onLogout()
   },
   methods: {
-    async login () {
+    async signup () {
       const credentials = this.form
       try {
-        const { data: { login: { token } } } = await this.$apollo.mutate({
+        const { data: { signup: { token } } } = await this.$apollo.mutate({
           mutation: gql`
-            mutation($email: String!, $password: String!) {
-              login(email: $email, password: $password) {
+            mutation($name: String!, $email: String!, $password: String!) {
+              signup(name: $name, email: $email, password: $password) {
                 token
               }
             }
@@ -72,7 +80,7 @@ export default {
 <style lang="scss">
 @import '../assets/_vars';
 
-.login {
+.signup {
   width: 100%;
   height: 100vh;
   display: flex;
@@ -105,12 +113,13 @@ export default {
       border-radius: 2px;
       background-color: $color-card;
       font-size: $font-sm;
-      font-weight: 500;
+      font-weight: 600;
       color: $color-white;
       font-size: $font-sm;
 
-      &:hover, &:active {
+      &:hover {
         background-color: $color-nav;
+        color: $color-white;
         cursor: pointer;
       }
     }
