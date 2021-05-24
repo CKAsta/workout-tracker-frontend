@@ -2,9 +2,14 @@
   <div>
     <div :class="{ curtain: isOverlayActive}" />
     <div v-show="isOverlayActive" class="workouts__create">
-      <h2 class="workouts__create--title">
-        Enter Workout Name
-      </h2>
+      <button class="workouts__create--buttons__close" @click="closeOverlay()">
+        <img :src="require('~/assets/icons/close_black.png')" class="workouts__create--buttons__close-img">
+      </button>
+      <div class="workouts__create-header">
+        <h2 class="workouts__create--title">
+          Enter Workout Name
+        </h2>
+      </div>
       <form class="workouts__create--form">
         <input
           id="name"
@@ -18,9 +23,6 @@
         <button class="workouts__create--buttons__create" @click="createWorkout()">
           Create
         </button>
-        <button class="workouts__create--buttons__cancel" @click="closeOverlay()">
-          Cancel
-        </button>
       </div>
     </div>
     <div class="workouts">
@@ -33,6 +35,7 @@
         :name="workout.name"
         :estimated-time="workout.exercisesOnWorkouts.length * 10"
         :number-of-exercises="workout.exercisesOnWorkouts.length"
+        :workout-id="parseInt(workout.id)"
         class="workouts__cards"
       />
       <button class="workouts__add" @click="openOverlay">
@@ -45,7 +48,7 @@
 
 <script>
 import gql from 'graphql-tag'
-import Navigation from '@/components/navigation'
+import Navigation from '@/components/Navigation'
 import WorkoutCard from '@/components/WorkoutCard'
 
 export default {
@@ -120,6 +123,10 @@ export default {
   width: 90%;
   margin: 0 auto;
 
+  @media screen and(min-width: $breakpoint-desktop) {
+    width: 30%;
+  }
+
   &__header {
     font-size: $font-md;
     color: $color-text;
@@ -132,19 +139,24 @@ export default {
   }
 
   &__add {
-    z-index: 1;
+    z-index: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 48px;
-    height: 48px;
-    margin-top: 15px;
+    width: 56px;
+    height: 56px;
+    margin-top: 25px;
     color: $color-white;
     font-size: $font-md;
-    background-color: $color-nav;
+    background-color: $color-info;
     border: none;
     border-radius: 50%;
     align-self: center;
+    margin-bottom: 25px;
+
+    &:hover {
+      background-color: $color-info-dark;
+    }
 
     &--icon {
       width: 32px;
@@ -153,56 +165,75 @@ export default {
   }
 
   &__create {
-    height: 170px;
-    width: 300px;
+    height: 250px;
+    width: 325px;
     z-index: 3;
     background-color: $color-white;
-    border-radius: 2px;
+    border-radius: 3px;
     font-size: $font-sm;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: fixed;
-    top: 50%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
+    padding: 10px 0 15px 0px;
 
-    &--title {
-      margin: 0;
+    &-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
     }
+
     &--form {
       &__input {
         width: 250px;
         margin-top: 10px;
-        padding: 12px 6px;
-        border: 1px solid $color-card;
+        padding: 20px 14px;
+        border: none;
+        background-color: $color-lightgrey;
         border-radius: 2px;
+        outline: none;
       }
     }
 
     &--buttons {
-      width: 250px;
+      width: 278px;
       display: flex;
       justify-content: space-evenly;
       margin-top: 20px;
 
       &__create {
+        width: 278px;
         background-color: $color-success;
         border-radius: 3px;
         border: none;
-        padding: 10px 15px;
-        font-size: $font-xs;
+        padding: 20px 14px;
+        font-size: $font-sm;
         color: $color-white;
       }
 
-      &__cancel {
-        background-color: $color-danger;
-        border-radius: 3px;
+      &__close {
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
         border: none;
-        padding: 10px 15px;
         font-size: $font-xs;
         color: $color-white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-self: flex-end;
+        margin-right: 20px;
+        background-color: $color-lightgrey;
+
+        &-img {
+          width: 20px;
+          height: 20px;
+        }
       }
     }
   }
@@ -213,7 +244,7 @@ export default {
   z-index: 2;
   display: block;
   position: absolute;
-  height: 100%;
+  height: 110vh;
   top: 0;
   left: 0;
   right: 0;

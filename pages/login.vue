@@ -72,9 +72,13 @@ export default {
 <style lang="scss">
 @import '../assets/_vars';
 
+body {
+  padding-bottom: 0;
+}
+
 .login {
   width: 100%;
-  height: 100vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -88,20 +92,23 @@ export default {
     display: flex;
     flex-direction: column;
     margin-top: 30px;
+    margin-bottom: 100px;
 
     &--input {
       width: 250px;
       margin-top: 10px;
-      padding: 12px 6px;
-      border: 2px solid $color-text-light;
+      padding: 20px 14px;
+      border: none;
       border-radius: 2px;
+      outline: none;
+      background-color: $color-lightgrey;
     }
 
     &--button {
-      width: 266px;
-      margin-top: 5px;
-      padding: 12px 6px;
-      border: 2px solid $color-nav;
+      width: 278px;
+      margin-top: 20px;
+      padding: 20px 14px;
+      border: none;
       border-radius: 2px;
       background-color: $color-card;
       font-size: $font-sm;

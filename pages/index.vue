@@ -20,10 +20,13 @@ export default {}
 
 <style lang="scss">
 @import '../assets/_vars';
+body {
+  padding-bottom: 0;
+}
 
 .workout-log {
   width: 100%;
-  height: 100vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -42,6 +45,8 @@ export default {}
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+    margin-bottom: 100px;
+
     @media screen and (max-width: $breakpoint-desktop) {
       flex-direction: column;
       align-items: center;

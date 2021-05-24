@@ -13,7 +13,7 @@
 
 <script>
 import gql from 'graphql-tag'
-import Navigation from '@/components/navigation'
+import Navigation from '@/components/Navigation'
 
 export default {
   components: {
@@ -51,6 +51,11 @@ export default {
     margin-left: 20px;
     display: flex;
     flex-direction: column;
+    margin: 0 auto;
+
+    @media screen and(min-width: $breakpoint-desktop) {
+      width: 30%;
+    }
 
     &__header {
       color: $color-text;

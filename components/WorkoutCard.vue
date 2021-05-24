@@ -1,8 +1,11 @@
 <template>
   <section class="workout-card">
-    <h2 class="workout-card__name">
-      {{ name }}
-    </h2>
+    <div class="workout-card__header">
+      <h2 class="workout-card__name">
+        {{ name }}
+      </h2>
+      <nuxt-link class="workout-card__edit" tag="img" :src="require('~/assets/icons/edit_white.png')" :to="{ name: 'Profile-Workouts-EditWorkout-id', params: { id: workoutId } }" />
+    </div>
     <div class="workout-card__info">
       <img class="workout-card__info--image" :src="require('~/assets/icons/list_white.png')">
       <span class="workout-card__info--text">{{ numberOfExercises }} Exercises</span>
@@ -26,6 +29,10 @@ export default {
     numberOfExercises: {
       type: Number,
       default: 8
+    },
+    workoutId: {
+      type: Number,
+      default: 0
     }
   }
 }
@@ -34,13 +41,26 @@ export default {
 <style lang="scss">
 @import '../assets/_vars';
   .workout-card {
-    height: 90px;
+    height: 120px;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
     background-color: $color-card;
     border-radius: 3px;
     color: $color-white;
+
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    &__edit {
+      width: 24px;
+      height: 24px;
+      margin: 0 10px 0 0;
+    }
 
     &__name {
       margin: 0 0 0 10px;
@@ -49,7 +69,7 @@ export default {
     }
     &__info {
       display: flex;
-      margin: 0 0 0 10px;
+      margin: 0 0 10px 10px;
 
       &--image {
         width: 16px;

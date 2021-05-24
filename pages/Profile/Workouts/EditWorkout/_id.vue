@@ -14,7 +14,10 @@
             <h2 class="edit-workout__form--exercise-header__title">
               {{ exerciseOnWorkout.exercise.name }}
             </h2>
-            <img :src="require('~/assets/icons/edit_black.png')" class="edit-workout__form--exercise-header__open" @click="openExerciseSelection = 'exercise-' + exerciseOnWorkout.id, setExerciseSelectionActive()">
+            <div class="edit-workout__form--exercise-header__actions">
+              <img :src="require('~/assets/icons/edit_black.png')" class="edit-workout__form--exercise-header__open" @click="openExerciseSelection = 'exercise-' + exerciseOnWorkout.id, setExerciseSelectionActive()">
+              <img :src="require('~/assets/icons/delete_black.png')" class="edit-workout__form--exercise-header__delete" @click="deleteExercise(exerciseOnWorkout.id)">
+            </div>
           </div>
           <div
             v-show="'exercise-' + exerciseOnWorkout.id == openExerciseSelection && isExerciseSelectionActive"
@@ -58,6 +61,7 @@
               placeholder="Weight"
               class="edit-workout__form--exercise--target-weight"
             >
+            <img class="edit-workout__form--exercise--target-delete" :src="require('~/assets/icons/delete_white.png')" @click="deleteSet(setTarget.id)">
           </div>
           <button class="edit-workout__form--exercise--target-add" type="button" @click="addSet(exerciseOnWorkout.id, exerciseOnWorkout.setTargets.length + 1)">
             Add Set
@@ -83,14 +87,15 @@
 
 <script>
 import gql from 'graphql-tag'
-import Navigation from '@/components/navigation'
-import ExerciseSelection from '@/components/exerciseSelection'
+import Navigation from '@/components/Navigation'
+import ExerciseSelection from '@/components/ExerciseSelection'
 
 export default {
   components: {
     Navigation,
     ExerciseSelection
   },
+  middleware: ['authenticated'],
   data () {
     return {
       getWorkoutById: {},
@@ -101,6 +106,67 @@ export default {
     }
   },
   methods: {
+    async deleteExercise (exerciseOnWorkoutId) {
+      // Delete all Sets associated with the exerciseOnWorkout
+      try {
+        await this.$apollo.mutate({
+          mutation: gql`
+              mutation($exercisesOnWorkoutsId: ID!) {
+                deleteSetTargetByExercise(exercisesOnWorkoutsId: $exercisesOnWorkoutsId) {
+                  exercisesOnWorkouts {
+                    id
+                  }
+                }
+              }
+            `,
+          variables: {
+            exercisesOnWorkoutsId: exerciseOnWorkoutId
+          }
+        })
+      } catch (e) {
+        console.error(e)
+      }
+
+      // Delete the ExerciseOnWorkout
+      try {
+        await this.$apollo.mutate({
+          mutation: gql`
+              mutation($id: ID!) {
+                deleteExercisesOnWorkouts(id: $id) {
+                  workout {
+                    id
+                  }
+                }
+              }
+            `,
+          variables: {
+            id: exerciseOnWorkoutId
+          }
+        })
+      } catch (e) {
+        console.error(e)
+      }
+      window.location.reload(true)
+    },
+    async deleteSet (setTargetId) {
+      try {
+        await this.$apollo.mutate({
+          mutation: gql`
+              mutation($id: ID!) {
+                deleteSetTarget(id: $id) {
+                  id
+                }
+              }
+            `,
+          variables: {
+            id: setTargetId
+          }
+        })
+      } catch (e) {
+        console.error(e)
+      }
+      window.location.reload(true)
+    },
     async addSet (exerciseOnWorkoutId, setNumber) {
       try {
         await this.$apollo.mutate({
@@ -147,6 +213,7 @@ export default {
             }
           })
         }
+        this.$router.push('/profile/workouts')
       } catch (e) {
         console.error(e)
       }
@@ -228,6 +295,10 @@ export default {
   width: 90%;
   margin: 0 auto;
 
+  @media screen and(min-width: $breakpoint-desktop) {
+    width: 30%;
+  }
+
   &__form {
     display: flex;
     flex-direction: column;
@@ -239,15 +310,15 @@ export default {
       width: 100%;
       margin-top: 20px;
       margin-bottom: 20px;
-      background-color: $color-success;
+      background-color: $color-info-dark;
       border: none;
-      padding: 8px 5px;
+      padding: 20px 14px;
       color:white;
       border-radius: 2px;
 
       &-img {
-        width: 20px;
-        height: 20px;
+        width: 24px;
+        height: 24px;
       }
     }
 
@@ -263,8 +334,13 @@ export default {
         align-items: center;
 
         &__open {
-          width: 24px;
-          height: 24px;
+          width: 26px;
+          height: 26px;
+        }
+
+        &__delete {
+          width: 26px;
+          height: 26px;
         }
       }
 
@@ -274,7 +350,6 @@ export default {
         justify-content: space-between;
         z-index: 3;
         background-color: $color-white;
-        height: 300px;
         width: 300px;
         border: none;
         border-radius: 3px;
@@ -284,11 +359,20 @@ export default {
         left: 50%;
         transform: translate(-50%, -50%);
 
+        @media screen and (min-width: $breakpoint-desktop) {
+          height: 300px;
+        }
+
         &__list {
           border: none;
           margin-bottom: 10px;
-          height: 250px;
           outline: none;
+          padding: 20px 14px;
+          background-color: $color-lightgrey;
+
+          @media screen and (min-width: $breakpoint-desktop) {
+            height: 250px;
+          }
 
           &-item {
             padding: 5px 7px;
@@ -301,7 +385,7 @@ export default {
             border-radius: 3px;
             background-color: $color-danger;
             color: white;
-            padding: 10px;
+            padding: 20px 14px;
             font-size: $font-selectbox;
           }
         }
@@ -312,16 +396,24 @@ export default {
 
          &__text {
           font-weight: 500;
-          margin-right: 40px;
+          margin-right: 70px;
          }
       }
 
       &--target {
         display: flex;
+        justify-content: space-between;
         margin-bottom: 12px;
 
+        &-delete {
+          background-color: $color-danger;
+          width: 24px;
+          height: 24px;
+          border-radius: 2px;
+          padding: 5px;
+        }
+
         &-setnumber {
-          margin-right: 15px;
           margin-left: 5px;
           font-size: $font-target;
           font-weight: 500;
@@ -334,10 +426,9 @@ export default {
           border-radius: 2px;
           padding: 5px;
           background-color: $color-lightgrey;
-          margin-right: 15px;
-          margin-left: 30px;
           font-size: $font-sm;
           font-weight: 600;
+          margin-left: 10px;
           outline: none;
         }
 
@@ -349,15 +440,15 @@ export default {
           background-color: $color-lightgrey;
           font-size: $font-sm;
           font-weight: 600;
-          margin-left: 20px;
+          margin-right: 18px;
           outline: none;
         }
 
         &-add {
           margin-top: 5px;
-          background-color: $color-success;
+          background-color: $color-info-dark;
           border: none;
-          padding: 8px 5px;
+          padding: 20px 14px;
           color:white;
           border-radius: 2px;
         }

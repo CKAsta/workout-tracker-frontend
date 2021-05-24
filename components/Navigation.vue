@@ -26,12 +26,23 @@ export default {
   justify-content: space-evenly;
   align-items: center;
   background-color: $color-nav;
-  position: sticky;
+  position: fixed;
   bottom: 0;
+
+  @media screen and(min-width: $breakpoint-desktop) {
+    left: 0;
+    width: 80px;
+    height: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
 
   &__link {
     width: 28px;
     height: 28px;
+    @media screen and(min-width: $breakpoint-desktop) {
+      margin-top: 50px;
+    }
   }
 }
 </style>

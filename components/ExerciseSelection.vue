@@ -1,6 +1,5 @@
 <template>
   <div :class="{ hide: !showOverlay}" class="exercise-selection">
-    {{ workoutId }}
     <form>
       <select
         v-model="exerciseId"
@@ -95,7 +94,6 @@ export default {
   justify-content: space-between;
   z-index: 3;
   background-color: $color-white;
-  height: 300px;
   width: 300px;
   border: none;
   border-radius: 3px;
@@ -105,12 +103,21 @@ export default {
   left: 50%;
   transform: translate(-50%, -50%);
 
+  @media screen and (min-width: $breakpoint-desktop) {
+    height: 380px;
+  }
+
   &__list {
     width: 100%;
     border: none;
     margin-bottom: 10px;
-    height: 210px;
     outline: none;
+    padding: 20px 14px;
+    background-color: $color-lightgrey;
+
+    @media screen and (min-width: $breakpoint-desktop) {
+      height: 250px;
+    }
 
     &-item {
       padding: 5px 7px;
@@ -123,7 +130,7 @@ export default {
       border-radius: 3px;
       background-color: $color-danger;
       color: white;
-      padding: 10px;
+      padding: 20px 14px;
       font-size: $font-selectbox;
     }
 
@@ -133,7 +140,7 @@ export default {
       border-radius: 3px;
       background-color: $color-success;
       color: white;
-      padding: 10px;
+      padding: 20px 14px;
       font-size: $font-selectbox;
       margin-bottom: 10px;
     }
