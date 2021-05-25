@@ -2,6 +2,7 @@
   <div class="navigation">
     <nuxt-link class="navigation__link" tag="img" :src="require('~/assets/icons/account_white.png')" to="/profile" />
     <nuxt-link class="navigation__link" tag="img" :src="require('~/assets/icons/workout_list_white.png')" to="/profile/workouts" />
+    <nuxt-link class="navigation__link" tag="img" :src="require('~/assets/icons/history_white.png')" to="/profile/history" />
     <img class="navigation__link" :src="require('~/assets/icons/logout_white.png')" @click="onLogout()">
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <section class="workout-card">
+  <section class="workout-card" @click="startWorkout(workoutId)">
     <div class="workout-card__header">
       <h2 class="workout-card__name">
         {{ name }}
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import gql from 'graphql-tag'
+
 export default {
   props: {
     name: {
@@ -33,6 +35,27 @@ export default {
     workoutId: {
       type: Number,
       default: 0
+    }
+  },
+  methods: {
+    async startWorkout (workoutId) {
+      try {
+        const { data: { addLog: { id } } } = await this.$apollo.mutate({
+          mutation: gql`
+            mutation($workoutId: ID!) {
+              addLog(workoutId: $workoutId) {
+                id
+              }
+            }
+          `,
+          variables: {
+            workoutId
+          }
+        })
+        this.$router.push({ name: 'Profile-Workouts-StartWorkout-log-id', params: { log: id, id: workoutId } })
+      } catch (e) {
+        console.error(e)
+      }
     }
   }
 }
