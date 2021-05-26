@@ -1,5 +1,5 @@
 <template>
-  <section class="workout-card" @click="startWorkout(workoutId)">
+  <section class="workout-card">
     <div class="workout-card__header">
       <h2 class="workout-card__name">
         {{ name }}
@@ -11,6 +11,7 @@
       <span class="workout-card__info--text">{{ numberOfExercises }} Exercises</span>
       <img class="workout-card__info--image" :src="require('~/assets/icons/time_white.png')">
       <span class="workout-card__info--text">{{ estimatedTime }} Minutes</span>
+      <img class="workout-card__info--start" :src="require('~/assets/icons/start_white.png')" @click="startWorkout(workoutId)">
     </div>
   </section>
 </template>
@@ -92,6 +93,7 @@ export default {
     }
     &__info {
       display: flex;
+      align-items: center;
       margin: 0 0 10px 10px;
 
       &--image {
@@ -103,6 +105,13 @@ export default {
         font-size: $font-xs;
         margin-left: 5px;
         margin-right: 20px;
+      }
+
+      &--start {
+        width: 24px;
+        height: 24px;
+        margin-left: auto;
+        margin-right: 15px;
       }
     }
 
