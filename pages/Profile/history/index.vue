@@ -4,14 +4,16 @@
       <h1 class="history__title">
         History
       </h1>
-      <LogCard
-        v-for="workout in me.workouts"
-        :key="workout.id"
-        :name="workout.name"
-        :training-time="workout.exercisesOnWorkouts.length * 10"
-        :number-of-exercises="workout.exercisesOnWorkouts.length"
-        class="history__cards"
-      />
+      <div v-for="workout in me.workouts" :key="workout.id">
+        <LogCard
+          v-for="log in workout.logs"
+          :key="log.id"
+          :name="log.workout.name"
+          :training-time="log.workout.exercisesOnWorkouts.length * 10"
+          :number-of-exercises="log.workout.exercisesOnWorkouts.length"
+          class="history__cards"
+        />
+      </div>
     </section>
     <Navigation />
   </div>
@@ -36,18 +38,23 @@ export default {
   apollo: {
     me: {
       query: gql`
-        query {
-          me{
-            id
-            workouts{
+        query{
+        me{
+          id
+          workouts {
+            logs {
               id
-              name
-              exercisesOnWorkouts {
+              workout {
                 id
+                name
+                exercisesOnWorkouts {
+                  id
+                }
               }
             }
           }
         }
+      }
       `
     }
   }
@@ -61,7 +68,7 @@ export default {
   display: flex;
   flex-direction: column;
   width: 90%;
-  margin-left: 20px;
+  margin: 0 auto;
 
   @media screen and(min-width: $breakpoint-desktop) {
     width: 30%;
