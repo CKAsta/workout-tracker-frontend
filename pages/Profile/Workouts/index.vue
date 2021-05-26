@@ -117,7 +117,6 @@ export default {
 @import '../../../assets/_vars';
 
 .workouts {
-  z-index: 1;
   display: flex;
   flex-direction: column;
   width: 90%;
@@ -134,7 +133,6 @@ export default {
   }
 
   &__cards {
-    z-index: 1;
     margin-top: 15px;
   }
 
