@@ -187,7 +187,7 @@ export default {
       } catch (e) {
         console.error(e)
       }
-      window.location.reload(true)
+      this.$nuxt.refresh()
     },
     setExerciseSelectionActive () {
       this.isExerciseSelectionActive = true
