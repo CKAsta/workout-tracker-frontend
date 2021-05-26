@@ -132,6 +132,7 @@ export default {
       color: white;
       padding: 20px 14px;
       font-size: $font-selectbox;
+      cursor: pointer;
     }
 
     &-add {
@@ -143,6 +144,7 @@ export default {
       padding: 20px 14px;
       font-size: $font-selectbox;
       margin-bottom: 10px;
+      cursor: pointer;
     }
   }
 }

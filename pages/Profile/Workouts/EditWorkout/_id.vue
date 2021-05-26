@@ -315,6 +315,7 @@ export default {
       padding: 20px 14px;
       color:white;
       border-radius: 2px;
+      cursor: pointer;
 
       &-img {
         width: 24px;
@@ -336,11 +337,13 @@ export default {
         &__open {
           width: 26px;
           height: 26px;
+          cursor: pointer;
         }
 
         &__delete {
           width: 26px;
           height: 26px;
+          cursor: pointer;
         }
       }
 
@@ -387,6 +390,7 @@ export default {
             color: white;
             padding: 20px 14px;
             font-size: $font-selectbox;
+            cursor: pointer;
           }
         }
       }
@@ -411,6 +415,7 @@ export default {
           height: 24px;
           border-radius: 2px;
           padding: 5px;
+          cursor: pointer;
         }
 
         &-setnumber {
@@ -451,6 +456,7 @@ export default {
           padding: 20px 14px;
           color:white;
           border-radius: 2px;
+          cursor: pointer;
         }
       }
     }

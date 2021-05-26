@@ -151,6 +151,7 @@ export default {
     border-radius: 50%;
     align-self: center;
     margin-bottom: 25px;
+    cursor: pointer;
 
     &:hover {
       background-color: $color-info-dark;

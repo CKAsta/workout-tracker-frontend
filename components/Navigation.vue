@@ -41,6 +41,7 @@ export default {
   &__link {
     width: 28px;
     height: 28px;
+    cursor: pointer;
     @media screen and(min-width: $breakpoint-desktop) {
       margin-top: 50px;
     }

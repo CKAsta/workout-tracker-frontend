@@ -84,6 +84,7 @@ export default {
       width: 24px;
       height: 24px;
       margin: 0 10px 0 0;
+      cursor: pointer;
     }
 
     &__name {
@@ -112,6 +113,7 @@ export default {
         height: 24px;
         margin-left: auto;
         margin-right: 15px;
+        cursor: pointer;
       }
     }
 
