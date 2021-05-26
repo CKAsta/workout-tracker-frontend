@@ -39,7 +39,9 @@ export default {
   modules: [
     '@nuxtjs/apollo'
   ],
-
+  
+  target: 'static',
+  
   apollo: {
     clientConfigs: {
       default: {
