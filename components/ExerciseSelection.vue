@@ -47,7 +47,7 @@ export default {
     },
     async addExerciseOnWorkout () {
       try {
-        await this.$apollo.mutate({
+        const { data: { addExercisesOnWorkouts: { id } } } = await this.$apollo.mutate({
           mutation: gql`
               mutation($exerciseId: ID!, $workoutId: ID!) {
                 addExercisesOnWorkouts(exerciseId: $exerciseId, workoutId: $workoutId) {
@@ -60,7 +60,9 @@ export default {
             workoutId: this.workoutId
           }
         })
-        await this.$nuxt.refresh()
+        if (id) {
+          this.$nuxt.refresh()
+        }
       } catch (e) {
         console.error(e)
       }
