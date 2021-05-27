@@ -195,53 +195,7 @@ export default {
         }
       }
 
-      try {
-        for (const exerciseOnWorkout of this.getWorkoutById.exercisesOnWorkouts) {
-          await this.$apollo.mutate({
-            mutation: gql`
-              mutation($id: ID!, $exerciseId: ID!, $workoutId: ID!) {
-                updateExercisesOnWorkouts(id: $id, exerciseId: $exerciseId, workoutId: $workoutId) {
-                  id
-                }
-              }
-            `,
-            variables: {
-              id: exerciseOnWorkout.id,
-              exerciseId: exerciseOnWorkout.exercise.id,
-              workoutId: this.$route.params.id
-            }
-          })
-        }
-      } catch (e) {
-        console.error(e)
-      }
-
-      // Update all existing Sets
-      try {
-        for (const exerciseOnWorkout of this.getWorkoutById.exercisesOnWorkouts) {
-          for (const setTarget of exerciseOnWorkout.setTargets) {
-            await this.$apollo.mutate({
-              mutation: gql`
-              mutation($id: ID!, $exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Int!) {
-                updateSetTarget(id: $id, exercisesOnWorkoutsId: $exercisesOnWorkoutsId, setNumber: $setNumber, reps: $reps, weight: $weight) {
-                  id
-                }
-              }
-            `,
-              variables: {
-                id: setTarget.id,
-                exercisesOnWorkoutsId: exerciseOnWorkout.id,
-                setNumber: setTarget.setNumber,
-                reps: setTarget.reps,
-                weight: setTarget.weight
-              }
-            })
-          }
-        }
-      } catch (e) {
-        console.error(e)
-      }
-
+      // Delete sets
       try {
         for (const deletedSet of this.deletedSets) {
           await this.$apollo.mutate({
@@ -277,6 +231,53 @@ export default {
               setNumber: addedSet.setNumber,
               reps: addedSet.reps,
               weight: addedSet.weight
+            }
+          })
+        }
+      } catch (e) {
+        console.error(e)
+      }
+
+      // Update all existing Sets
+      try {
+        for (const exerciseOnWorkout of this.getWorkoutById.exercisesOnWorkouts) {
+          for (const setTarget of exerciseOnWorkout.setTargets) {
+            await this.$apollo.mutate({
+              mutation: gql`
+              mutation($id: ID!, $exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Int!) {
+                updateSetTarget(id: $id, exercisesOnWorkoutsId: $exercisesOnWorkoutsId, setNumber: $setNumber, reps: $reps, weight: $weight) {
+                  id
+                }
+              }
+            `,
+              variables: {
+                id: setTarget.id,
+                exercisesOnWorkoutsId: exerciseOnWorkout.id,
+                setNumber: setTarget.setNumber,
+                reps: setTarget.reps,
+                weight: setTarget.weight
+              }
+            })
+          }
+        }
+      } catch (e) {
+        console.error(e)
+      }
+
+      try {
+        for (const exerciseOnWorkout of this.getWorkoutById.exercisesOnWorkouts) {
+          await this.$apollo.mutate({
+            mutation: gql`
+              mutation($id: ID!, $exerciseId: ID!, $workoutId: ID!) {
+                updateExercisesOnWorkouts(id: $id, exerciseId: $exerciseId, workoutId: $workoutId) {
+                  id
+                }
+              }
+            `,
+            variables: {
+              id: exerciseOnWorkout.id,
+              exerciseId: exerciseOnWorkout.exercise.id,
+              workoutId: this.$route.params.id
             }
           })
         }
