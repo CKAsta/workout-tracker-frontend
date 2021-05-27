@@ -196,8 +196,8 @@ export default {
       }
 
       // Delete sets
-      try {
-        for (const deletedSet of this.deletedSets) {
+      for (const deletedSet of this.deletedSets) {
+        try {
           await this.$apollo.mutate({
             mutation: gql`
               mutation($id: ID!) {
@@ -210,14 +210,14 @@ export default {
               id: deletedSet
             }
           })
+        } catch (e) {
+          console.error(e)
         }
-      } catch (e) {
-        console.error(e)
       }
 
       // Send a request for all added Sets
-      try {
-        for (const addedSet of this.addedSets) {
+      for (const addedSet of this.addedSets) {
+        try {
           await this.$apollo.mutate({
             mutation: gql`
               mutation($exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Int!) {
@@ -233,14 +233,14 @@ export default {
               weight: addedSet.weight
             }
           })
+        } catch (e) {
+          console.error(e)
         }
-      } catch (e) {
-        console.error(e)
       }
 
       // Update all existing Sets
-      try {
-        for (const exerciseOnWorkout of this.getWorkoutById.exercisesOnWorkouts) {
+      for (const exerciseOnWorkout of this.getWorkoutById.exercisesOnWorkouts) {
+        try {
           for (const setTarget of exerciseOnWorkout.setTargets) {
             await this.$apollo.mutate({
               mutation: gql`
@@ -259,13 +259,13 @@ export default {
               }
             })
           }
+        } catch (e) {
+          console.error(e)
         }
-      } catch (e) {
-        console.error(e)
       }
 
-      try {
-        for (const exerciseOnWorkout of this.getWorkoutById.exercisesOnWorkouts) {
+      for (const exerciseOnWorkout of this.getWorkoutById.exercisesOnWorkouts) {
+        try {
           await this.$apollo.mutate({
             mutation: gql`
               mutation($id: ID!, $exerciseId: ID!, $workoutId: ID!) {
@@ -280,9 +280,9 @@ export default {
               workoutId: this.$route.params.id
             }
           })
+        } catch (e) {
+          console.error(e)
         }
-      } catch (e) {
-        console.error(e)
       }
 
       this.$router.push('/profile/workouts')
