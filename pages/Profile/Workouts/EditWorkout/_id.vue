@@ -4,7 +4,7 @@
       <h1>{{ getWorkoutById.name }}</h1>
       <form class="edit-workout__form">
         <div
-          v-for="exerciseOnWorkout in getWorkoutById.exercisesOnWorkouts"
+          v-for="(exerciseOnWorkout, exerciseIndex) in getWorkoutById.exercisesOnWorkouts"
           :id="exerciseOnWorkout.id"
           :key="exerciseOnWorkout.id"
           class="edit-workout__form--exercise"
@@ -16,7 +16,7 @@
             </h2>
             <div class="edit-workout__form--exercise-header__actions">
               <img :src="require('~/assets/icons/edit_black.png')" class="edit-workout__form--exercise-header__open" @click="openExerciseSelection = 'exercise-' + exerciseOnWorkout.id, setExerciseSelectionActive()">
-              <img :src="require('~/assets/icons/delete_black.png')" class="edit-workout__form--exercise-header__delete" @click="deleteExercise(exerciseOnWorkout.id)">
+              <img :src="require('~/assets/icons/delete_black.png')" class="edit-workout__form--exercise-header__delete" @click="deleteExercise(exerciseOnWorkout.id, exerciseIndex)">
             </div>
           </div>
           <div
@@ -44,26 +44,26 @@
             <span class="edit-workout__form--exercise-info__text">Weight</span>
           </div>
           <div
-            v-for="setTarget in exerciseOnWorkout.setTargets"
+            v-for="(setTarget, setIndex) in exerciseOnWorkout.setTargets"
             :key="setTarget.id"
             class="edit-workout__form--exercise--target"
           >
             <span class="edit-workout__form--exercise--target-setnumber">{{ setTarget.setNumber }}</span>
             <input
-              v-model="setTarget.reps"
+              v-model.number="setTarget.reps"
               type="text"
               placeholder="Reps"
               class="edit-workout__form--exercise--target-reps"
             >
             <input
-              v-model="setTarget.weight"
+              v-model.number="setTarget.weight"
               type="text"
               placeholder="Weight"
               class="edit-workout__form--exercise--target-weight"
             >
-            <img class="edit-workout__form--exercise--target-delete" :src="require('~/assets/icons/delete_white.png')" @click="deleteSet(setTarget.id)">
+            <img class="edit-workout__form--exercise--target-delete" :src="require('~/assets/icons/delete_white.png')" @click="deleteSet(exerciseIndex, setIndex)">
           </div>
-          <button class="edit-workout__form--exercise--target-add" type="button" @click="addSet(exerciseOnWorkout.id, exerciseOnWorkout.setTargets.length + 1)">
+          <button class="edit-workout__form--exercise--target-add" type="button" @click="addSet(exerciseIndex, exerciseOnWorkout.id)">
             Add Set
           </button>
         </div>
@@ -102,92 +102,50 @@ export default {
       getAllExercises: {},
       isExerciseSelectionActive: false,
       openExerciseSelection: '',
-      openAddExerciseSelection: false
+      openAddExerciseSelection: false,
+      addedSets: [],
+      deletedSets: [],
+      deletedExercises: []
     }
   },
   methods: {
-    async deleteExercise (exerciseOnWorkoutId) {
-      // Delete all Sets associated with the exerciseOnWorkout
-      try {
-        await this.$apollo.mutate({
-          mutation: gql`
-              mutation($exercisesOnWorkoutsId: ID!) {
-                deleteSetTargetByExercise(exercisesOnWorkoutsId: $exercisesOnWorkoutsId) {
-                  exercisesOnWorkouts {
-                    id
-                  }
-                }
-              }
-            `,
-          variables: {
-            exercisesOnWorkoutsId: exerciseOnWorkoutId
-          }
-        })
-      } catch (e) {
-        console.error(e)
+    addSet (exerciseIndex, exerciseOnWorkoutId) {
+      const set = {
+        reps: 10,
+        setNumber: this.getWorkoutById.exercisesOnWorkouts[exerciseIndex].setTargets.length + 1,
+        weight: 50,
+        exerciseId: parseInt(exerciseOnWorkoutId)
       }
-
-      // Delete the ExerciseOnWorkout
-      try {
-        await this.$apollo.mutate({
-          mutation: gql`
-              mutation($id: ID!) {
-                deleteExercisesOnWorkouts(id: $id) {
-                  workout {
-                    id
-                  }
-                }
-              }
-            `,
-          variables: {
-            id: exerciseOnWorkoutId
-          }
-        })
-      } catch (e) {
-        console.error(e)
-      }
-      window.location.reload(true)
+      // Push to Object to see the added set
+      this.getWorkoutById.exercisesOnWorkouts[exerciseIndex].setTargets.push(set)
+      // Push to the list of added Sets
+      this.addedSets.push(set)
     },
-    async deleteSet (setTargetId) {
-      try {
-        await this.$apollo.mutate({
-          mutation: gql`
-              mutation($id: ID!) {
-                deleteSetTarget(id: $id) {
-                  id
-                }
-              }
-            `,
-          variables: {
-            id: setTargetId
+    deleteSet (exerciseIndex, setIndex) {
+      const setId = this.getWorkoutById.exercisesOnWorkouts[exerciseIndex].setTargets[setIndex].id
+      if (setId) {
+        this.deletedSets.push(setId)
+        this.getWorkoutById.exercisesOnWorkouts[exerciseIndex].setTargets.splice(setIndex, 1)
+      } else {
+        const setNumber = this.getWorkoutById.exercisesOnWorkouts[exerciseIndex].setTargets[setIndex].setNumber
+        this.getWorkoutById.exercisesOnWorkouts[exerciseIndex].setTargets.splice(setIndex, 1)
+        if (this.addedSets.length === 1) {
+          this.addedSets.splice(0, 1)
+        } else {
+          for (let i = 0; i < this.addedSets.length; i++) {
+            if (setNumber === this.addedSets[i].setNumber) {
+              this.addedSets.splice(this.addedSets[i], 1)
+            }
           }
-        })
-      } catch (e) {
-        console.error(e)
+        }
       }
-      window.location.reload(true)
+      for (let i = setIndex; i < this.getWorkoutById.exercisesOnWorkouts[exerciseIndex].setTargets.length; i++) {
+        this.getWorkoutById.exercisesOnWorkouts[exerciseIndex].setTargets[i].setNumber -= 1
+      }
     },
-    async addSet (exerciseOnWorkoutId, setNumber) {
-      try {
-        await this.$apollo.mutate({
-          mutation: gql`
-              mutation($exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Int!) {
-                addSetTarget(exercisesOnWorkoutsId: $exercisesOnWorkoutsId, setNumber: $setNumber, reps: $reps, weight: $weight) {
-                  id
-                }
-              }
-            `,
-          variables: {
-            exercisesOnWorkoutsId: exerciseOnWorkoutId,
-            setNumber,
-            reps: 10,
-            weight: 50
-          }
-        })
-      } catch (e) {
-        console.error(e)
-      }
-      window.location.reload(true)
+    deleteExercise (exerciseId, exerciseIndex) {
+      this.getWorkoutById.exercisesOnWorkouts.splice(exerciseIndex, 1)
+      this.deletedExercises.push(exerciseId)
     },
     setExerciseSelectionActive () {
       this.isExerciseSelectionActive = true
@@ -196,6 +154,47 @@ export default {
       this.isExerciseSelectionActive = false
     },
     async updateExercisesOnWorkouts () {
+      for (const deletedExercise of this.deletedExercises) {
+        try {
+          await this.$apollo.mutate({
+            mutation: gql`
+                mutation($exercisesOnWorkoutsId: ID!) {
+                  deleteSetTargetByExercise(exercisesOnWorkoutsId: $exercisesOnWorkoutsId) {
+                    exercisesOnWorkouts {
+                      id
+                    }
+                  }
+                }
+              `,
+            variables: {
+              exercisesOnWorkoutsId: deletedExercise
+            }
+          })
+        } catch (e) {
+          console.error(e)
+        }
+
+        // Delete the ExerciseOnWorkout
+        try {
+          await this.$apollo.mutate({
+            mutation: gql`
+                mutation($id: ID!) {
+                  deleteExercisesOnWorkouts(id: $id) {
+                    workout {
+                      id
+                    }
+                  }
+                }
+              `,
+            variables: {
+              id: deletedExercise
+            }
+          })
+        } catch (e) {
+          console.error(e)
+        }
+      }
+
       try {
         for (const exerciseOnWorkout of this.getWorkoutById.exercisesOnWorkouts) {
           await this.$apollo.mutate({
@@ -218,6 +217,7 @@ export default {
         console.error(e)
       }
 
+      // Update all existing Sets
       try {
         for (const exerciseOnWorkout of this.getWorkoutById.exercisesOnWorkouts) {
           for (const setTarget of exerciseOnWorkout.setTargets) {
@@ -232,9 +232,9 @@ export default {
               variables: {
                 id: setTarget.id,
                 exercisesOnWorkoutsId: exerciseOnWorkout.id,
-                setNumber: parseInt(setTarget.setNumber),
-                reps: parseInt(setTarget.reps),
-                weight: parseInt(setTarget.weight)
+                setNumber: setTarget.setNumber,
+                reps: setTarget.reps,
+                weight: setTarget.weight
               }
             })
           }
@@ -242,7 +242,50 @@ export default {
       } catch (e) {
         console.error(e)
       }
-      this.$nuxt.refresh()
+
+      try {
+        for (const deletedSet of this.deletedSets) {
+          await this.$apollo.mutate({
+            mutation: gql`
+              mutation($id: ID!) {
+                deleteSetTarget(id: $id) {
+                  id
+                }
+              }
+            `,
+            variables: {
+              id: deletedSet
+            }
+          })
+        }
+      } catch (e) {
+        console.error(e)
+      }
+
+      // Send a request for all added Sets
+      try {
+        for (const addedSet of this.addedSets) {
+          await this.$apollo.mutate({
+            mutation: gql`
+              mutation($exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Int!) {
+                addSetTarget(exercisesOnWorkoutsId: $exercisesOnWorkoutsId, setNumber: $setNumber, reps: $reps, weight: $weight) {
+                  id
+                }
+              }
+            `,
+            variables: {
+              exercisesOnWorkoutsId: addedSet.exerciseId,
+              setNumber: addedSet.setNumber,
+              reps: addedSet.reps,
+              weight: addedSet.weight
+            }
+          })
+        }
+      } catch (e) {
+        console.error(e)
+      }
+
+      this.$router.push('/profile/workouts')
     }
   },
   apollo: {
