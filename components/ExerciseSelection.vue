@@ -60,7 +60,7 @@ export default {
             workoutId: this.workoutId
           }
         })
-        this.$nuxt.refresh()
+        await this.$nuxt.refresh()
       } catch (e) {
         console.error(e)
       }
