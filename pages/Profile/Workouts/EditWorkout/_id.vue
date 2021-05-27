@@ -212,7 +212,6 @@ export default {
             }
           })
         }
-        this.$router.push('/profile/workouts')
       } catch (e) {
         console.error(e)
       }
