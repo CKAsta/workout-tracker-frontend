@@ -4,7 +4,10 @@
       <h2 class="workout-card__name">
         {{ name }}
       </h2>
-      <nuxt-link class="workout-card__edit" tag="img" :src="require('~/assets/icons/edit_white.png')" :to="{ name: 'Profile-Workouts-EditWorkout-id', params: { id: workoutId } }" />
+      <div>
+        <nuxt-link class="workout-card__edit" tag="img" :src="require('~/assets/icons/edit_white.png')" :to="{ name: 'Profile-Workouts-EditWorkout-id', params: { id: workoutId } }" />
+        <img class="workout-card__delete" :src="require('~/assets/icons/delete_white.png')" @click="deleteWorkout(workoutId, exerciseIds)">
+      </div>
     </div>
     <div class="workout-card__info">
       <img class="workout-card__info--image" :src="require('~/assets/icons/list_white.png')">
@@ -36,6 +39,10 @@ export default {
     workoutId: {
       type: Number,
       default: 0
+    },
+    exerciseIds: {
+      type: Array,
+      default: null
     }
   },
   methods: {
@@ -57,6 +64,104 @@ export default {
       } catch (e) {
         console.error(e)
       }
+    },
+    async deleteWorkout (workoutId, exerciseIds) {
+      for (const exerciseId of exerciseIds) {
+        try {
+          await this.$apollo.mutate({
+            mutation: gql`
+            mutation($exercisesOnWorkoutsId: ID!) {
+              deleteSetTargetByExercise(exercisesOnWorkoutsId: $exercisesOnWorkoutsId) {
+                exercisesOnWorkouts {
+                  id
+                }
+              }
+            }
+          `,
+            variables: {
+              exercisesOnWorkoutsId: exerciseId
+            }
+          })
+        } catch (e) {
+          console.error(e)
+        }
+
+        try {
+          await this.$apollo.mutate({
+            mutation: gql`
+            mutation($exercisesOnWorkoutsId: ID!) {
+              deleteLogEntryByExercise(exercisesOnWorkoutsId: $exercisesOnWorkoutsId) {
+                exercisesOnWorkouts {
+                  id
+                }
+              }
+            }
+          `,
+            variables: {
+              exercisesOnWorkoutsId: exerciseId
+            }
+          })
+        } catch (e) {
+          console.error(e)
+        }
+      }
+      try {
+        await this.$apollo.mutate({
+          mutation: gql`
+            mutation($workoutId: ID!) {
+              deleteExerciseByWorkoutId(workoutId: $workoutId) {
+                workout {
+                  id
+                }
+              }
+            }
+          `,
+          variables: {
+            workoutId
+          }
+        })
+      } catch (e) {
+        console.error(e)
+      }
+
+      try {
+        await this.$apollo.mutate({
+          mutation: gql`
+            mutation($workoutId: ID!) {
+              deleteLogByWorkoutId(workoutId: $workoutId) {
+                workout {
+                  id
+                }
+              }
+            }
+          `,
+          variables: {
+            workoutId
+          }
+        })
+      } catch (e) {
+        console.error(e)
+      }
+
+      try {
+        await this.$apollo.mutate({
+          mutation: gql`
+            mutation($id: ID!) {
+              deleteWorkout(id: $id) {
+                user {
+                  id
+                }
+              }
+            }
+          `,
+          variables: {
+            id: workoutId
+          }
+        })
+      } catch (e) {
+        console.error(e)
+      }
+      window.location.reload(true)
     }
   }
 }
@@ -81,6 +186,12 @@ export default {
     }
 
     &__edit {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    &__delete {
       width: 24px;
       height: 24px;
       margin: 0 10px 0 0;

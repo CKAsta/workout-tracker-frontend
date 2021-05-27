@@ -36,6 +36,7 @@
         :estimated-time="workout.exercisesOnWorkouts.length * 10"
         :number-of-exercises="workout.exercisesOnWorkouts.length"
         :workout-id="parseInt(workout.id)"
+        :exercise-ids="fillExerciseIds(workout.exercisesOnWorkouts)"
         class="workouts__cards"
       />
       <button class="workouts__add" @click="openOverlay">
@@ -67,6 +68,11 @@ export default {
     }
   },
   methods: {
+    fillExerciseIds (exerciseList) {
+      const exerciseIds = []
+      exerciseList.forEach(exercise => exerciseIds.push(exercise.id))
+      return exerciseIds
+    },
     openOverlay () {
       this.isOverlayActive = true
     },
