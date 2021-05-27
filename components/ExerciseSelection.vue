@@ -60,10 +60,10 @@ export default {
             workoutId: this.workoutId
           }
         })
+        this.$nuxt.refresh()
       } catch (e) {
         console.error(e)
       }
-      this.$nuxt.refresh()
     }
   },
   apollo: {
