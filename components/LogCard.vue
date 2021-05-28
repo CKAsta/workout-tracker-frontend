@@ -1,5 +1,5 @@
 <template>
-  <section class="log-card">
+  <section class="log-card" @click="$router.push({ name: 'Profile-history-id', params: { id: logId } })">
     <div class="log-card__header">
       <h2 class="log-card__name">
         {{ name }} from {{ months[date.getMonth()] }} {{ date.getDate() }}
@@ -34,6 +34,10 @@ export default {
     date: {
       type: Date,
       default () { return new Date() }
+    },
+    logId: {
+      type: Number,
+      default: 0
     }
   },
   data () {

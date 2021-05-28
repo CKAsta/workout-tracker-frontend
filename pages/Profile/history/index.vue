@@ -11,6 +11,7 @@
           :name="log.workout.name"
           :training-time="log.workout.exercisesOnWorkouts.length * 10"
           :number-of-exercises="log.workout.exercisesOnWorkouts.length"
+          :log-id="parseInt(log.id)"
           class="history__cards"
         />
       </div>
@@ -69,9 +70,11 @@ export default {
   flex-direction: column;
   width: 90%;
   margin: 0 auto;
+  padding-bottom: 80px;
 
   @media screen and(min-width: $breakpoint-desktop) {
     width: 30%;
+    padding-bottom: 0px;
   }
 
   &__title {

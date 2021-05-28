@@ -127,9 +127,11 @@ export default {
   flex-direction: column;
   width: 90%;
   margin: 0 auto;
+  padding-bottom: 80px;
 
   @media screen and(min-width: $breakpoint-desktop) {
     width: 30%;
+    padding-bottom: 0px;
   }
 
   &__header {
@@ -249,7 +251,7 @@ export default {
   z-index: 2;
   display: block;
   position: absolute;
-  height: 110vh;
+  height: 122vh;
   top: 0;
   left: 0;
   right: 0;
