@@ -1,22 +1,24 @@
 <template>
-  <section class="log-detail">
-    <div v-for="exercise in Object.keys(logEntryList)" :key="exercise">
-      <h2 class="log-detail__title">
-        {{ exercise }}
-      </h2>
-      <div class="log-detail__info">
-        <span>Set</span>
-        <span>Reps</span>
-        <span>Weigth</span>
+  <div>
+    <section class="log-detail">
+      <div v-for="exercise in Object.keys(logEntryList)" :key="exercise">
+        <h2 class="log-detail__title">
+          {{ exercise }}
+        </h2>
+        <div class="log-detail__info">
+          <span>Set</span>
+          <span>Reps</span>
+          <span>Weigth</span>
+        </div>
+        <div v-for="logEntry in logEntryList[exercise]" :key="logEntry.name" class="log-detail__detail">
+          <span class="log-detail__detail--setNumber">{{ logEntry.setNumber }}</span>
+          <span class="log-detail__detail--reps">{{ logEntry.reps }}</span>
+          <span class="log-detail__detail--weight">{{ logEntry.weight }}</span>
+        </div>
       </div>
-      <div v-for="logEntry in logEntryList[exercise]" :key="logEntry.name" class="log-detail__detail">
-        <span class="log-detail__detail--setNumber">{{ logEntry.setNumber }}</span>
-        <span class="log-detail__detail--reps">{{ logEntry.reps }}</span>
-        <span class="log-detail__detail--weight">{{ logEntry.weight }}</span>
-      </div>
-    </div>
+    </section>
     <Navigation />
-  </section>
+  </div>
 </template>
 
 <script>
