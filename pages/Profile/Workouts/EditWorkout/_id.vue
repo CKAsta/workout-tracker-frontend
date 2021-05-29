@@ -439,11 +439,17 @@ export default {
       }
 
       &-info {
+        display: flex;
+        justify-content: space-between;
         margin-bottom: 10px;
+        margin-right: 118px;
+
+        @media screen and(min-width: $breakpoint-desktop) {
+          margin-right: 188px;
+        }
 
          &__text {
           font-weight: 500;
-          margin-right: 70px;
          }
       }
 
