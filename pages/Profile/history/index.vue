@@ -4,17 +4,14 @@
       <h1 class="history__title">
         History
       </h1>
-      <div v-for="workout in me.workouts" :key="workout.id">
-        <LogCard
-          v-for="log in workout.logs"
-          :key="log.id"
-          :name="log.workout.name"
-          :training-time="log.workout.exercisesOnWorkouts.length * 10"
-          :number-of-exercises="log.workout.exercisesOnWorkouts.length"
-          :log-id="parseInt(log.id)"
-          class="history__cards"
-        />
-      </div>
+      <LogCard
+        v-for="log in sortedLogs"
+        :key="log.id"
+        :name="log.name"
+        :date="months[new Date(log.date).getMonth()] + ' ' + new Date(log.date).getDate()"
+        :log-id="parseInt(log.id)"
+        class="history__cards"
+      />
     </section>
     <Navigation />
   </div>
@@ -30,10 +27,45 @@ export default {
     LogCard,
     Navigation
   },
+  filters: {
+    sortByDate (value) {
+      if (!value) { return '' }
+    }
+  },
   middleware: ['authenticated'],
   data () {
     return {
-      me: {}
+      me: {},
+      months: [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ]
+    }
+  },
+  computed: {
+    sortedLogs () {
+      const logs = []
+      this.me.workouts.forEach((workout) => {
+        workout.logs.forEach((log) => {
+          log.name = log.workout.name
+          logs.push(log)
+        })
+      })
+
+      logs.sort(function (log1, log2) {
+        return new Date(log2.date) - new Date(log1.date)
+      })
+      return logs
     }
   },
   apollo: {
@@ -43,8 +75,10 @@ export default {
         me{
           id
           workouts {
+            id
             logs {
               id
+              date
               workout {
                 id
                 name
