@@ -4,14 +4,16 @@
       <h1 class="history__title">
         History
       </h1>
-      <LogCard
-        v-for="log in sortedLogs"
-        :key="log.id"
-        :name="log.name"
-        :date="months[new Date(log.date).getMonth()] + ' ' + new Date(log.date).getDate()"
-        :log-id="parseInt(log.id)"
-        class="history__cards"
-      />
+      <div v-if="sortedLogs">
+        <LogCard
+          v-for="log in sortedLogs"
+          :key="log.id"
+          :name="log.name"
+          :date="months[new Date(log.date).getMonth()] + ' ' + new Date(log.date).getDate()"
+          :log-id="parseInt(log.id)"
+          class="history__cards"
+        />
+      </div>
     </section>
     <Navigation />
   </div>
@@ -36,6 +38,7 @@ export default {
   data () {
     return {
       me: {},
+      componentLoaded: false,
       months: [
         'January',
         'February',
@@ -54,6 +57,9 @@ export default {
   },
   computed: {
     sortedLogs () {
+      if (!this.me.workouts) {
+        return []
+      }
       const logs = []
       this.me.workouts.forEach((workout) => {
         workout.logs.forEach((log) => {

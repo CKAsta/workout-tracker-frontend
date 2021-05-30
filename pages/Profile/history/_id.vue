@@ -37,6 +37,9 @@ export default {
   },
   computed: {
     logEntryList () {
+      if (!this.getLogById.logEntries) {
+        return []
+      }
       const exercises = {}
       for (let i = 0; i < this.getLogById.logEntries.length; i++) {
         const key = this.getLogById.logEntries[i].exercisesOnWorkouts.exercise.name
@@ -60,6 +63,7 @@ export default {
               exercisesOnWorkouts {
                 id
                 exercise {
+                  id
                   name
                 }
               }

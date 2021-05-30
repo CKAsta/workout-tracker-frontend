@@ -2,7 +2,7 @@
   <section class="log-card" @click="$router.push({ name: 'Profile-history-id', params: { id: logId } })">
     <div class="log-card__header">
       <h2 class="log-card__name">
-        {{ name }} from {{ months[date.getMonth()] }} {{ date.getDate() }}
+        {{ name }} from {{ date }}
       </h2>
     </div>
     <div class="log-card__info">
@@ -32,37 +32,19 @@ export default {
       default: 8
     },
     date: {
-      type: Date,
-      default () { return new Date() }
+      type: String,
+      default: '01.01.2000'
     },
     logId: {
       type: Number,
       default: 0
     }
   },
-  data () {
-    return {
-      months: [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-      ]
-    }
-  },
   apollo: {
     me: {
       query: gql`
         query {
-          me{
+          me {
             id
             email
             name
