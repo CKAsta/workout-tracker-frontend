@@ -41,6 +41,7 @@
             <div class="edit-workout__form--exercise--target-field">
               <label class="edit-workout__form--exercise--target-label">RIR</label>
               <input
+                v-model.number="setTarget.rir"
                 type="text"
                 placeholder="RIR"
                 class="edit-workout__form--exercise--target-input"
@@ -78,8 +79,8 @@ export default {
           for (const setTarget of exerciseOnWorkout.setTargets) {
             await this.$apollo.mutate({
               mutation: gql`
-              mutation($logId: ID!, $exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Int!) {
-                addLogEntry(logId: $logId, exercisesOnWorkoutsId: $exercisesOnWorkoutsId, setNumber: $setNumber, reps: $reps, weight: $weight) {
+              mutation($logId: ID!, $exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Float!, $rir: Float!) {
+                addLogEntry(logId: $logId, exercisesOnWorkoutsId: $exercisesOnWorkoutsId, setNumber: $setNumber, reps: $reps, weight: $weight, rir: $rir) {
                   id
                 }
               }
@@ -89,7 +90,8 @@ export default {
                 exercisesOnWorkoutsId: exerciseOnWorkout.id,
                 setNumber: parseInt(setTarget.setNumber),
                 reps: parseInt(setTarget.reps),
-                weight: parseInt(setTarget.weight)
+                weight: setTarget.weight,
+                rir: setTarget.rir
               }
             })
           }
@@ -118,6 +120,7 @@ export default {
                 setNumber
                 reps
                 weight
+                rir
               }
             }
           }

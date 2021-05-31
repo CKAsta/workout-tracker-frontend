@@ -5,15 +5,21 @@
         <h2 class="log-detail__title">
           {{ exercise }}
         </h2>
-        <div class="log-detail__info">
-          <span>Set</span>
-          <span>Reps</span>
-          <span>Weigth</span>
-        </div>
+        <div class="log-detail__info" />
         <div v-for="logEntry in logEntryList[exercise]" :key="logEntry.name" class="log-detail__detail">
           <span class="log-detail__detail--setNumber">{{ logEntry.setNumber }}</span>
-          <span class="log-detail__detail--reps">{{ logEntry.reps }}</span>
-          <span class="log-detail__detail--weight">{{ logEntry.weight }}</span>
+          <div class="log-detail__detail--field">
+            <span class="log-detail__detail--label">Reps</span>
+            <span class="log-detail__detail--entry">{{ logEntry.reps }}</span>
+          </div>
+          <div class="log-detail__detail--field">
+            <span class="log-detail__detail--label">Weigth</span>
+            <span class="log-detail__detail--entry">{{ logEntry.weight }}</span>
+          </div>
+          <div class="log-detail__detail--field">
+            <span class="log-detail__detail--label">RIR</span>
+            <span class="log-detail__detail--entry"> {{ logEntry.rir }}</span>
+          </div>
         </div>
       </div>
     </section>
@@ -47,7 +53,12 @@ export default {
       }
       for (let i = 0; i < this.getLogById.logEntries.length; i++) {
         const key = this.getLogById.logEntries[i].exercisesOnWorkouts.exercise.name
-        exercises[key].push({ setNumber: this.getLogById.logEntries[i].setNumber, reps: this.getLogById.logEntries[i].reps, weight: this.getLogById.logEntries[i].weight })
+        exercises[key].push({
+          setNumber: this.getLogById.logEntries[i].setNumber,
+          reps: this.getLogById.logEntries[i].reps,
+          weight: this.getLogById.logEntries[i].weight,
+          rir: this.getLogById.logEntries[i].rir
+        })
       }
       return exercises
     }
@@ -70,6 +81,7 @@ export default {
               setNumber
               reps
               weight
+              rir
             }
           }
         }
@@ -109,31 +121,31 @@ export default {
 
     &--setNumber {
       font-weight: 500;
+      align-self: flex-end;
+      margin-bottom: 10px;
+      font-size: $font-selectbox;
     }
 
-    &--reps {
+    &--field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    &--label {
+      font-size: $font-xs;
+      color: $color-info;
+      font-weight: 500;
+    }
+
+    &--entry {
       width: 40px;
       text-align: center;
       border: none;
       border-radius: 2px;
-      padding: 5px;
+      padding: 10px 7px;
       background-color: $color-lightgrey;
-      font-size: $font-sm;
+      font-size: $font-selectbox;
       font-weight: 600;
-      margin-left: 10px;
-      outline: none;
-    }
-
-    &--weight {
-      width: 40px;
-      text-align: center;
-      border: none;
-      border-radius: 2px;
-      padding: 5px;
-      background-color: $color-lightgrey;
-      font-size: $font-sm;
-      font-weight: 600;
-      margin-left: 10px;
       outline: none;
     }
   }

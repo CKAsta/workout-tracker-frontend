@@ -65,6 +65,7 @@
             <div class="edit-workout__form--exercise--target-field">
               <label class="edit-workout__form--exercise--target-label">RIR</label>
               <input
+                v-model.number="setTarget.rir"
                 type="text"
                 placeholder="RIR"
                 class="edit-workout__form--exercise--target-input"
@@ -125,6 +126,7 @@ export default {
         reps: 10,
         setNumber: this.getWorkoutById.exercisesOnWorkouts[exerciseIndex].setTargets.length + 1,
         weight: 50,
+        rir: 2,
         exerciseId: parseInt(exerciseOnWorkoutId)
       }
       // Push to Object to see the added set
@@ -200,8 +202,8 @@ export default {
           for (const setTarget of addedExercise.setTargets) {
             await this.$apollo.mutate({
               mutation: gql`
-              mutation($exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Int!) {
-                addSetTarget(exercisesOnWorkoutsId: $exercisesOnWorkoutsId, setNumber: $setNumber, reps: $reps, weight: $weight) {
+              mutation($exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Float!, $rir: Float!) {
+                addSetTarget(exercisesOnWorkoutsId: $exercisesOnWorkoutsId, setNumber: $setNumber, reps: $reps, weight: $weight, rir: $rir) {
                   id
                 }
               }
@@ -210,7 +212,8 @@ export default {
                 exercisesOnWorkoutsId: id,
                 setNumber: setTarget.setNumber,
                 reps: setTarget.reps,
-                weight: setTarget.weight
+                weight: setTarget.weight,
+                rir: parseFloat(setTarget.rir)
               }
             })
           }
@@ -287,8 +290,8 @@ export default {
           try {
             await this.$apollo.mutate({
               mutation: gql`
-              mutation($exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Int!) {
-                addSetTarget(exercisesOnWorkoutsId: $exercisesOnWorkoutsId, setNumber: $setNumber, reps: $reps, weight: $weight) {
+              mutation($exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Float!, $rir: Float!) {
+                addSetTarget(exercisesOnWorkoutsId: $exercisesOnWorkoutsId, setNumber: $setNumber, reps: $reps, weight: $weight, rir: $rir) {
                   id
                 }
               }
@@ -297,7 +300,8 @@ export default {
                 exercisesOnWorkoutsId: addedSet.exerciseId,
                 setNumber: addedSet.setNumber,
                 reps: addedSet.reps,
-                weight: addedSet.weight
+                weight: addedSet.weight,
+                rir: parseFloat(addedSet.rir)
               }
             })
           } catch (e) {
@@ -312,8 +316,8 @@ export default {
           for (const setTarget of exerciseOnWorkout.setTargets) {
             await this.$apollo.mutate({
               mutation: gql`
-              mutation($id: ID!, $exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Int!) {
-                updateSetTarget(id: $id, exercisesOnWorkoutsId: $exercisesOnWorkoutsId, setNumber: $setNumber, reps: $reps, weight: $weight) {
+              mutation($id: ID!, $exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Float!, $rir: Float!) {
+                updateSetTarget(id: $id, exercisesOnWorkoutsId: $exercisesOnWorkoutsId, setNumber: $setNumber, reps: $reps, weight: $weight, rir: $rir) {
                   id
                 }
               }
@@ -323,7 +327,8 @@ export default {
                 exercisesOnWorkoutsId: exerciseOnWorkout.id,
                 setNumber: setTarget.setNumber,
                 reps: setTarget.reps,
-                weight: setTarget.weight
+                weight: setTarget.weight,
+                rir: setTarget.rir
               }
             })
           }
@@ -374,6 +379,7 @@ export default {
                 setNumber
                 reps
                 weight
+                rir
               }
             }
           }
