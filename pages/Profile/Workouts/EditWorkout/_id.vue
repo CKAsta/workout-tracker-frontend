@@ -42,6 +42,7 @@
             <span class="edit-workout__form--exercise-info__text">Set</span>
             <span class="edit-workout__form--exercise-info__text">Reps</span>
             <span class="edit-workout__form--exercise-info__text">Weight</span>
+            <span class="edit-workout__form--exercise-info__text">RIR</span>
           </div>
           <div
             v-for="(setTarget, setIndex) in exerciseOnWorkout.setTargets"
@@ -61,6 +62,11 @@
               placeholder="Weight"
               class="edit-workout__form--exercise--target-weight"
             >
+            <input
+              type="text"
+              placeholder="RIR"
+              class="edit-workout__form--exercise--target-weight"
+            >
             <img class="edit-workout__form--exercise--target-delete" :src="require('~/assets/icons/delete_white.png')" @click="deleteSet(exerciseIndex, setIndex)">
           </div>
           <button class="edit-workout__form--exercise--target-add" type="button" @click="addSet(exerciseIndex, exerciseOnWorkout.id)">
@@ -73,11 +79,12 @@
         :show-overlay="openAddExerciseSelection"
         :workout-id="parseInt($route.params.id)"
         @toggleShowOverlay="openAddExerciseSelection = false"
+        @add-exercise="addExercise"
       />
       <button class="edit-workout__form--save" type="button" @click="openAddExerciseSelection = true">
         Add Exercise
       </button>
-      <button class="edit-workout__form--save" @click="updateExercisesOnWorkouts()">
+      <button class="edit-workout__form--save" @click="updateExercisesOnWorkouts(), addExercises()">
         <img class="edit-workout__form--save-img" :src="require('~/assets/icons/save_white.png')">
       </button>
     </div>
@@ -105,7 +112,8 @@ export default {
       openAddExerciseSelection: false,
       addedSets: [],
       deletedSets: [],
-      deletedExercises: []
+      deletedExercises: [],
+      addedExercises: []
     }
   },
   methods: {
@@ -147,11 +155,66 @@ export default {
       this.getWorkoutById.exercisesOnWorkouts.splice(exerciseIndex, 1)
       this.deletedExercises.push(exerciseId)
     },
+    addExercise (value) {
+      // Create a new exerciseOnWorkout
+      const exerciseOnWorkout = {}
+      exerciseOnWorkout.exercise = {}
+      exerciseOnWorkout.setTargets = []
+      exerciseOnWorkout.exercise.id = value
+
+      // Get name of exercise
+      this.getAllExercises.forEach((exercise) => {
+        if (exercise.id === value) {
+          exerciseOnWorkout.exercise.name = exercise.name
+        }
+      })
+
+      this.getWorkoutById.exercisesOnWorkouts.push(exerciseOnWorkout)
+      this.addedExercises.push(exerciseOnWorkout)
+    },
     setExerciseSelectionActive () {
       this.isExerciseSelectionActive = true
     },
     setExerciseSelectionInactive () {
       this.isExerciseSelectionActive = false
+    },
+    async addExercises () {
+      for (const addedExercise of this.addedExercises) {
+        try {
+          const { data: { addExercisesOnWorkouts: { id } } } = await this.$apollo.mutate({
+            mutation: gql`
+              mutation($exerciseId: ID!, $workoutId: ID!) {
+                addExercisesOnWorkouts(exerciseId: $exerciseId, workoutId: $workoutId) {
+                  id
+                }
+              }
+            `,
+            variables: {
+              exerciseId: parseInt(addedExercise.exercise.id),
+              workoutId: this.$route.params.id
+            }
+          })
+          for (const setTarget of addedExercise.setTargets) {
+            await this.$apollo.mutate({
+              mutation: gql`
+              mutation($exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Int!) {
+                addSetTarget(exercisesOnWorkoutsId: $exercisesOnWorkoutsId, setNumber: $setNumber, reps: $reps, weight: $weight) {
+                  id
+                }
+              }
+            `,
+              variables: {
+                exercisesOnWorkoutsId: id,
+                setNumber: setTarget.setNumber,
+                reps: setTarget.reps,
+                weight: setTarget.weight
+              }
+            })
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      }
     },
     async updateExercisesOnWorkouts () {
       for (const deletedExercise of this.deletedExercises) {
@@ -217,24 +280,26 @@ export default {
 
       // Send a request for all added Sets
       for (const addedSet of this.addedSets) {
-        try {
-          await this.$apollo.mutate({
-            mutation: gql`
+        if (addedSet.exerciseId !== null) {
+          try {
+            await this.$apollo.mutate({
+              mutation: gql`
               mutation($exercisesOnWorkoutsId: ID!, $setNumber: Int!, $reps: Int!, $weight: Int!) {
                 addSetTarget(exercisesOnWorkoutsId: $exercisesOnWorkoutsId, setNumber: $setNumber, reps: $reps, weight: $weight) {
                   id
                 }
               }
             `,
-            variables: {
-              exercisesOnWorkoutsId: addedSet.exerciseId,
-              setNumber: addedSet.setNumber,
-              reps: addedSet.reps,
-              weight: addedSet.weight
-            }
-          })
-        } catch (e) {
-          console.error(e)
+              variables: {
+                exercisesOnWorkoutsId: addedSet.exerciseId,
+                setNumber: addedSet.setNumber,
+                reps: addedSet.reps,
+                weight: addedSet.weight
+              }
+            })
+          } catch (e) {
+            console.error(e)
+          }
         }
       }
 
@@ -442,15 +507,15 @@ export default {
         display: flex;
         justify-content: space-between;
         margin-bottom: 10px;
-        margin-right: 118px;
-
+        width: 260px;
         @media screen and(min-width: $breakpoint-desktop) {
           margin-right: 188px;
+          width: 75%;
         }
 
-         &__text {
+        &__text {
           font-weight: 500;
-         }
+        }
       }
 
       &--target {
@@ -468,7 +533,6 @@ export default {
         }
 
         &-setnumber {
-          margin-left: 5px;
           font-size: $font-target;
           font-weight: 500;
         }
@@ -482,8 +546,8 @@ export default {
           background-color: $color-lightgrey;
           font-size: $font-sm;
           font-weight: 600;
-          margin-left: 10px;
           outline: none;
+          margin-left: 20px;
         }
 
         &-weight {
@@ -494,7 +558,6 @@ export default {
           background-color: $color-lightgrey;
           font-size: $font-sm;
           font-weight: 600;
-          margin-right: 18px;
           outline: none;
         }
 

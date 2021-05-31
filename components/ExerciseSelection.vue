@@ -11,7 +11,7 @@
           {{ exercise.name }}
         </option>
       </select>
-      <button class="exercise-selection__list-add" type="submit" @click="addExerciseOnWorkout()">
+      <button class="exercise-selection__list-add" type="button" @click="addExercise(exerciseId)">
         Add
       </button>
     </form>
@@ -42,6 +42,9 @@ export default {
     }
   },
   methods: {
+    addExercise (exerciseId) {
+      this.$emit('add-exercise', exerciseId)
+    },
     toggleShowOverlay () {
       this.$emit('toggleShowOverlay')
     },
