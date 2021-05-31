@@ -11,7 +11,7 @@
           {{ exercise.name }}
         </option>
       </select>
-      <button class="exercise-selection__list-add" type="button" @click="addExercise(exerciseId)">
+      <button class="exercise-selection__list-add" type="button" @click="addExercise(exerciseId), toggleShowOverlay()">
         Add
       </button>
     </form>
@@ -47,28 +47,6 @@ export default {
     },
     toggleShowOverlay () {
       this.$emit('toggleShowOverlay')
-    },
-    async addExerciseOnWorkout () {
-      try {
-        const { data: { addExercisesOnWorkouts: { id } } } = await this.$apollo.mutate({
-          mutation: gql`
-              mutation($exerciseId: ID!, $workoutId: ID!) {
-                addExercisesOnWorkouts(exerciseId: $exerciseId, workoutId: $workoutId) {
-                  id
-                }
-              }
-            `,
-          variables: {
-            exerciseId: this.exerciseId,
-            workoutId: this.workoutId
-          }
-        })
-        if (id) {
-          this.$nuxt.refresh()
-        }
-      } catch (e) {
-        console.error(e)
-      }
     }
   },
   apollo: {

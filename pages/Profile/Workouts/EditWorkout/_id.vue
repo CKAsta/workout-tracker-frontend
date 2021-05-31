@@ -38,35 +38,38 @@
               Close
             </button>
           </div>
-          <div class="edit-workout__form--exercise-info">
-            <span class="edit-workout__form--exercise-info__text">Set</span>
-            <span class="edit-workout__form--exercise-info__text">Reps</span>
-            <span class="edit-workout__form--exercise-info__text">Weight</span>
-            <span class="edit-workout__form--exercise-info__text">RIR</span>
-          </div>
           <div
             v-for="(setTarget, setIndex) in exerciseOnWorkout.setTargets"
             :key="setTarget.id"
             class="edit-workout__form--exercise--target"
           >
             <span class="edit-workout__form--exercise--target-setnumber">{{ setTarget.setNumber }}</span>
-            <input
-              v-model.number="setTarget.reps"
-              type="text"
-              placeholder="Reps"
-              class="edit-workout__form--exercise--target-reps"
-            >
-            <input
-              v-model.number="setTarget.weight"
-              type="text"
-              placeholder="Weight"
-              class="edit-workout__form--exercise--target-weight"
-            >
-            <input
-              type="text"
-              placeholder="RIR"
-              class="edit-workout__form--exercise--target-weight"
-            >
+            <div class="edit-workout__form--exercise--target-field">
+              <label class="edit-workout__form--exercise--target-label">Reps</label>
+              <input
+                v-model.number="setTarget.reps"
+                type="text"
+                placeholder="Reps"
+                class="edit-workout__form--exercise--target-input"
+              >
+            </div>
+            <div class="edit-workout__form--exercise--target-field">
+              <label class="edit-workout__form--exercise--target-label">Weight</label>
+              <input
+                v-model.number="setTarget.weight"
+                type="text"
+                placeholder="Weight"
+                class="edit-workout__form--exercise--target-input"
+              >
+            </div>
+            <div class="edit-workout__form--exercise--target-field">
+              <label class="edit-workout__form--exercise--target-label">RIR</label>
+              <input
+                type="text"
+                placeholder="RIR"
+                class="edit-workout__form--exercise--target-input"
+              >
+            </div>
             <img class="edit-workout__form--exercise--target-delete" :src="require('~/assets/icons/delete_white.png')" @click="deleteSet(exerciseIndex, setIndex)">
           </div>
           <button class="edit-workout__form--exercise--target-add" type="button" @click="addSet(exerciseIndex, exerciseOnWorkout.id)">
@@ -402,6 +405,7 @@ export default {
 .edit-workout {
   width: 90%;
   margin: 0 auto;
+  padding-bottom: 80px;
 
   @media screen and(min-width: $breakpoint-desktop) {
     width: 30%;
@@ -523,6 +527,18 @@ export default {
         justify-content: space-between;
         margin-bottom: 12px;
 
+        &-field {
+          display: flex;
+          flex-direction: column;
+        }
+
+        &-label {
+          font-size: $font-xs;
+          color: $color-info;
+          font-weight: 500;
+          margin-bottom: 5px;
+        }
+
         &-delete {
           background-color: $color-danger;
           width: 24px;
@@ -530,33 +546,24 @@ export default {
           border-radius: 2px;
           padding: 5px;
           cursor: pointer;
+          align-self: flex-end;
         }
 
         &-setnumber {
-          font-size: $font-target;
+          font-size: $font-selectbox;
           font-weight: 500;
+          align-self: flex-end;
+          margin-bottom: 10px;
         }
 
-        &-reps {
+        &-input {
           width: 40px;
           text-align: center;
           border: none;
           border-radius: 2px;
-          padding: 5px;
+          padding: 10px 7px;
           background-color: $color-lightgrey;
-          font-size: $font-sm;
-          font-weight: 600;
-          outline: none;
-          margin-left: 20px;
-        }
-
-        &-weight {
-          width: 40px;
-          text-align: center;
-          border: none;
-          padding: 5px;
-          background-color: $color-lightgrey;
-          font-size: $font-sm;
+          font-size: $font-selectbox;
           font-weight: 600;
           outline: none;
         }

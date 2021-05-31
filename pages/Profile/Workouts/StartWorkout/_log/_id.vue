@@ -14,29 +14,38 @@
               {{ exerciseOnWorkout.exercise.name }}
             </h2>
           </div>
-          <div class="edit-workout__form--exercise-info">
-            <span class="edit-workout__form--exercise-info__text">Set</span>
-            <span class="edit-workout__form--exercise-info__text">Reps</span>
-            <span class="edit-workout__form--exercise-info__text">Weight</span>
-          </div>
           <div
             v-for="setTarget in exerciseOnWorkout.setTargets"
             :key="setTarget.id"
             class="edit-workout__form--exercise--target"
           >
             <span class="edit-workout__form--exercise--target-setnumber">{{ setTarget.setNumber }}</span>
-            <input
-              v-model="setTarget.reps"
-              type="text"
-              placeholder="Reps"
-              class="edit-workout__form--exercise--target-reps"
-            >
-            <input
-              v-model="setTarget.weight"
-              type="text"
-              placeholder="Weight"
-              class="edit-workout__form--exercise--target-weight"
-            >
+            <div class="edit-workout__form--exercise--target-field">
+              <label class="edit-workout__form--exercise--target-label">Reps</label>
+              <input
+                v-model.number="setTarget.reps"
+                type="text"
+                placeholder="Reps"
+                class="edit-workout__form--exercise--target-input"
+              >
+            </div>
+            <div class="edit-workout__form--exercise--target-field">
+              <label class="edit-workout__form--exercise--target-label">Weight</label>
+              <input
+                v-model.number="setTarget.weight"
+                type="text"
+                placeholder="Weight"
+                class="edit-workout__form--exercise--target-input"
+              >
+            </div>
+            <div class="edit-workout__form--exercise--target-field">
+              <label class="edit-workout__form--exercise--target-label">RIR</label>
+              <input
+                type="text"
+                placeholder="RIR"
+                class="edit-workout__form--exercise--target-input"
+              >
+            </div>
           </div>
         </div>
       </form>
@@ -130,9 +139,11 @@ export default {
 .edit-workout {
   width: 90%;
   margin: 0 auto;
+  padding-bottom: 80px;
 
   @media screen and(min-width: $breakpoint-desktop) {
     width: 30%;
+    padding-bottom: 80px;
   }
 
   &__form {
@@ -171,11 +182,12 @@ export default {
       }
 
       &-info {
+        display: flex;
+        justify-content: space-between;
         margin-bottom: 10px;
 
          &__text {
           font-weight: 500;
-          margin-right: 70px;
          }
       }
 
@@ -183,10 +195,10 @@ export default {
         display: flex;
         justify-content: space-between;
         margin-bottom: 12px;
+        margin-right: 20px;
 
         &-setnumber {
-          margin-left: 5px;
-          font-size: $font-target;
+          font-size: $font-selectbox;
           font-weight: 500;
         }
 
@@ -195,11 +207,9 @@ export default {
           text-align: center;
           border: none;
           border-radius: 2px;
-          padding: 5px;
           background-color: $color-lightgrey;
           font-size: $font-sm;
           font-weight: 600;
-          margin-left: 10px;
           outline: none;
         }
 
@@ -207,11 +217,10 @@ export default {
           width: 40px;
           text-align: center;
           border: none;
-          padding: 5px;
+
           background-color: $color-lightgrey;
           font-size: $font-sm;
           font-weight: 600;
-          margin-right: 18px;
           outline: none;
         }
       }
